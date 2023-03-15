@@ -11,10 +11,10 @@ const CustomerSchema = new Schema({
     unique: true,
     required: true,
   },
-  phone: {
-    type: Number,
-    required: true,
-  },
+  // phone: {
+  //   type: Number,
+  //   required: true,
+  // },
   coins: {
     type: Number,
   },

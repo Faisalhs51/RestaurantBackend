@@ -15,6 +15,9 @@ app.use("/api/items", require("./routes/items"));
 app.use("/api/onlineCart", require("./routes/onlineItems"));
 app.use("/api/feedback", require("./routes/feedback"));
 app.use("/api/bill", require("./routes/billing"));
+app.use("/api/testing", require("./routes/test"));
+app.use("/api/specialItems", require("./routes/specialItem"));
+app.use("/api/storekeeper", require("./routes/storekeeper"));
 
 app.listen(port, () => {
   console.log(`Backend listening at http://localhost:${port}`);

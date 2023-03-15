@@ -6,6 +6,14 @@ const OnlineItemsSchema = new Schema({
     type: String,
     required: true,
   },
+  tableno: {
+    type: Number,
+    required: true,
+  },
+  show: {
+    type: Boolean,
+    required: true,
+  },
   cart: [
     {
       name: {
@@ -15,6 +23,12 @@ const OnlineItemsSchema = new Schema({
       price: {
         type: Number,
         required: true,
+      },
+      qty: {
+        type: Number,
+      },
+      show: {
+        type: Boolean,
       },
     },
   ],

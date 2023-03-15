@@ -19,7 +19,6 @@ router.post("/createFeed", async (req, res) => {
     const feedback = new Feedback({
       name,
       email,
-      subject,
       desc,
     });
 

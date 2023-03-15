@@ -2,10 +2,14 @@ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const Items = require("../models/Items");
+const fs = require("fs");
+const path = require("path");
 
 //For storing image in Uploads folder
 const Storage = multer.diskStorage({
-  destination: "uploads",
+  destination: (req, file, cb) => {
+    cb(null, "uploads");
+  },
   filename: (req, file, cb) => {
     cb(null, file.originalname);
   },
@@ -14,7 +18,7 @@ const Storage = multer.diskStorage({
 //Upload function calling multer
 const upload = multer({
   storage: Storage,
-}).single("testImage");
+});
 
 //Get request for dish items
 router.get("/", async (req, res) => {
@@ -27,30 +31,53 @@ router.get("/", async (req, res) => {
 });
 
 //Add item
-router.post("/", (req, res) => {
-  upload(req, res, (err) => {
-    if (err) {
-      console.log(err);
-    } else {
-      const newItem = new Items({
-        name: req.body.name,
-        category: req.body.category,
-        image: {
-          data: req.file.filename,
-          contentType: "image/png",
-        },
-        price: req.body.price,
-        est: req.body.est,
-        likes: 0,
-      });
-      try {
-        const it = newItem.save();
-        res.json(it);
-      } catch (err) {
-        res.send("Error");
-      }
-    }
+// router.post("/", async (req, res) => {
+//   upload(req, res);
+//   const newItem = new Items({
+//     name: req.body.name,
+//     category: req.body.category,
+//     image: {
+//       data: req.file.filename,
+//       contentType: "image/png",
+//     },
+//     price: req.body.price,
+//     est: req.body.est,
+//     likes: 0,
+//   });
+//   try {
+//     const it = await newItem.save();
+//     res.json(it);
+//     console.log(it);
+//   } catch (err) {
+//     res.send("Error");
+//   }
+// });
+router.post("/", upload.single("image"), (req, res) => {
+  const newItem = new Items({
+    name: req.body.name,
+    category: req.body.category,
+    image: {
+      data: fs.readFileSync("uploads/" + req.file.filename),
+      contentType: "image/png",
+    },
+    price: req.body.price,
+    est: req.body.est,
+    likes: 0,
   });
+  try {
+    newItem.save().then((res) => {
+      console.log("Image uploaded successfully");
+      const uploadsFolder = path.join(__dirname, "..\\uploads");
+      fs.unlink(path.join(uploadsFolder, req.file.filename), (err) => {
+        if (err) {
+          console.error(err);
+        }
+      });
+    });
+    res.send("Image is saved");
+  } catch (err) {
+    res.send("Error");
+  }
 });
 
 //Updating the item
