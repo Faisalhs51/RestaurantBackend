@@ -11,7 +11,7 @@ app.use(express.json());
 
 // Available routes
 app.use("/api/items", require("./routes/items"));
-// app.use('/api/customers', require('./routes/customer'));
+app.use("/api/customer", require("./routes/customer"));
 app.use("/api/onlineCart", require("./routes/onlineItems"));
 app.use("/api/feedback", require("./routes/feedback"));
 app.use("/api/bill", require("./routes/billing"));

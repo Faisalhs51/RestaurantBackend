@@ -7,7 +7,7 @@ const CustomerSchema = new Schema({
     required: true,
   },
   email: {
-    type: email,
+    type: String,
     unique: true,
     required: true,
   },

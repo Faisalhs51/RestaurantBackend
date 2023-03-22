@@ -6,13 +6,14 @@ const nodemailer = require("nodemailer");
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
-router.get("/:id", async (req, res) => {
+router.get("/:email", async (req, res) => {
   try {
-    const itemsList = await OnlineItems.find({ _id: req.params.id });
+    // const itemsList = await OnlineItems.find({ _id: req.params.id });
+    const itemsList = await OnlineItems.findOne({ email: req.params.email });
     // console.log(itemsList)
     if (itemsList) {
       let total = 0;
-      for (let i of itemsList[0].cart) {
+      for (let i of itemsList.cart) {
         total += i.price * i.qty;
       }
       res.json(total);
@@ -23,8 +24,6 @@ router.get("/:id", async (req, res) => {
     res.send("Error " + err);
   }
 });
-
-// const YOUR_DOMAIN = "http://localhost:5000/";
 
 const calculateOrderAmount = async (email) => {
   // Replace this constant with a calculation of the order's amount
@@ -81,20 +80,28 @@ const calculateOrderAmount = async (email) => {
 
 router.post("/create-payment-intent", async (req, res) => {
   const email = req.body.email;
-
+  // console.log(req.body.coin);
+  // let m = (await calculateOrderAmount(email)) - 520 * 10;
+  // console.log(m);
+  // console.log("hi");
   // Create a PaymentIntent with the order amount and currency
   // A PaymentIntent tracks the customer’s payment lifecycle, keeping track of any failed payment attempts and ensuring the customer is only charged once.
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: await calculateOrderAmount(email),
-    currency: "inr",
-    automatic_payment_methods: {
-      enabled: true,
-    },
-  });
+  try {
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: (await calculateOrderAmount(email)) - req.body.coin * 10,
+      currency: "inr",
+      automatic_payment_methods: {
+        enabled: true,
+      },
+    });
 
-  res.send({
-    clientSecret: paymentIntent.client_secret,
-  });
+    res.send({
+      clientSecret: paymentIntent.client_secret,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err);
+  }
 });
 
 const sendMail = async (receiver, items, total) => {
@@ -254,11 +261,13 @@ const sendMail = async (receiver, items, total) => {
   });
 };
 
-router.get("/billing/sendmail", async (req, res) => {
+router.post("/billing/sendmail/", async (req, res) => {
   try {
+    console.log(req.body);
     const email = req.body.email;
+    const coin = req.body.coin;
     let items = "";
-    const total = await calculateOrderAmount(email);
+    const total = (await calculateOrderAmount(email)) - coin * 10;
     const itemsList = await OnlineItems.findOne({ email });
     if (itemsList) {
       for (let i of itemsList.cart) {

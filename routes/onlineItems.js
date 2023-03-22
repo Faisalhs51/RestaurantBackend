@@ -15,7 +15,7 @@ router.get("/:email", async (req, res) => {
   try {
     const itemsList = await OnlineItems.findOne({ email: req.params.email });
     if (itemsList) res.json(itemsList);
-    else res.json();
+    else res.status(204).json();
   } catch (err) {
     res.send("Error " + err);
   }
@@ -80,9 +80,9 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:email", async (req, res) => {
   try {
-    const item = await OnlineItems.findById(req.params.id);
+    const item = await OnlineItems.findOne({ email: req.params.email });
     const it = await item.delete();
     res.json(it);
   } catch (err) {
