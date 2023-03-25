@@ -13,7 +13,7 @@ router.get("/getUser/:email", async (req, res) => {
   } catch (err) {
     console.log(err);
     res.send("Error " + err);
-  } 
+  }
 });
 
 router.post("/createUser", async (req, res) => {

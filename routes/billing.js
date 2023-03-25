@@ -3,6 +3,7 @@ const router = express.Router();
 require("dotenv").config();
 const OnlineItems = require("../models/OnlineItems");
 const nodemailer = require("nodemailer");
+const Customer = require("../models/Customer");
 
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
@@ -37,7 +38,7 @@ const calculateOrderAmount = async (email) => {
       for (let i of itemsList.cart) {
         total += i.price * i.qty;
       }
-      return total * 100;
+      return (total + 100) * 100;
     } else {
       // res.json();
       return 0;
@@ -80,15 +81,16 @@ const calculateOrderAmount = async (email) => {
 
 router.post("/create-payment-intent", async (req, res) => {
   const email = req.body.email;
-  // console.log(req.body.coin);
   // let m = (await calculateOrderAmount(email)) - 520 * 10;
   // console.log(m);
   // console.log("hi");
   // Create a PaymentIntent with the order amount and currency
   // A PaymentIntent tracks the customer’s payment lifecycle, keeping track of any failed payment attempts and ensuring the customer is only charged once.
   try {
+    let am = (await calculateOrderAmount(email)) - req.body.coin * 10;
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: (await calculateOrderAmount(email)) - req.body.coin * 10,
+      amount: am <= 100 ? 100 : am,
+      // (await calculateOrderAmount(email)) - req.body.coin * 10 < 0 ? 100 : ,
       currency: "inr",
       automatic_payment_methods: {
         enabled: true,
@@ -216,6 +218,10 @@ const sendMail = async (receiver, items, total) => {
 			</thead>
 			<tbody>
       ${items}
+      <tr>
+        <td colspan="2" style="text-align:center;">Service Charge</td>
+        <td>100</td>
+      </tr>
 			</tbody>
 			<tfoot>
 				<tr>
@@ -263,12 +269,32 @@ const sendMail = async (receiver, items, total) => {
 
 router.post("/billing/sendmail/", async (req, res) => {
   try {
-    console.log(req.body);
     const email = req.body.email;
     const coin = req.body.coin;
     let items = "";
-    const total = (await calculateOrderAmount(email)) - coin * 10;
-    const itemsList = await OnlineItems.findOne({ email });
+    let am = await calculateOrderAmount(email);
+    let total = am - coin * 10;
+    if (total <= 100) {
+      total = 100;
+    }
+
+    let customer = await Customer.findOne({ email: req.body.email });
+    let c = customer.coins;
+    if (am / 10 < coin) {
+      c = Math.abs(am / 100 - coin / 10);
+      c += (am / 100) * 0.08;
+    } else if (coin === 0) {
+      c += (am / 100) * 0.08;
+    } else {
+      c = (am / 100) * 0.08;
+    }
+    // console.log(c);
+
+    customer.set({ coins: Math.floor(c) });
+    await customer.save();
+    // customer = await Customer.findByIdAndUpdate();
+
+    const itemsList = await OnlineItems.findOne({ email: req.body.email });
     if (itemsList) {
       for (let i of itemsList.cart) {
         items += `<tr>
