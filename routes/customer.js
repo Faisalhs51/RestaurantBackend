@@ -16,6 +16,16 @@ router.get("/getUser/:email", async (req, res) => {
   }
 });
 
+router.post("/aaja", async (req, res) => {
+  try {
+    console.log("mai hu");
+    res.send("1");
+    console.log("idhar hu");
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 router.post("/createUser", async (req, res) => {
   try {
     // console.log(req.body);

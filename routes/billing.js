@@ -233,6 +233,8 @@ const sendMail = async (receiver, items, total) => {
 
     <div class="footer">
 		<p>Thank you for your order!</p>
+    <br>
+    <p>Visit again!</p>
 	</div>
   <div class="regards">
   <p>
@@ -271,6 +273,7 @@ router.post("/billing/sendmail/", async (req, res) => {
   try {
     const email = req.body.email;
     const coin = req.body.coin;
+    res.send("Message sented successfully.");
     let items = "";
     let am = await calculateOrderAmount(email);
     let total = am - coin * 10;
@@ -306,7 +309,6 @@ router.post("/billing/sendmail/", async (req, res) => {
       }
     }
     await sendMail(email, items, total / 100);
-    res.json("Message sented successfully.");
   } catch (err) {
     console.log(err);
     res.status(500).send("Internal Server Error");

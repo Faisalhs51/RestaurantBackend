@@ -12,6 +12,17 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.delete("/deleteFeed/:key", async (req, res) => {
+  try {
+    const feedback = await Feedback.findById(req.params.key);
+    const f = await feedback.delete();
+    res.json(f);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 router.post("/createFeed", async (req, res) => {
   try {
     const { name, email, desc } = req.body;
