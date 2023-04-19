@@ -1,0 +1,49 @@
+[{
+  "_id": {
+    "$oid": "641b0b7e70c59bb2338c3324"
+  },
+  "name": "Faisal Shaikh 6119027",
+  "email": "faisal.6119027.it@mhssce.ac.in",
+  "coins": 32,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "641c2322078fd48ef7f6bcbc"
+  },
+  "name": "Faisal Husain Shaikh",
+  "email": "faisalhs2002@gmail.com",
+  "coins": 208,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "642144ceed28199cab6f9776"
+  },
+  "name": "Moin Patil",
+  "email": "moinrp2001@gmail.com",
+  "coins": 600,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "64229036de13d60ded27365e"
+  },
+  "name": "Shaikh Saif",
+  "email": "shaikhsaif20010622@gmail.com",
+  "coins": 98,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "6434eac52f2ed0732461dee8"
+  },
+  "name": "Shaif Ahmed 6119034",
+  "email": "shaif.6119034.it@mhssce.ac.in",
+  "coins": 600,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "643a6a9012d8b08527db7f83"
+  },
+  "name": "Faisal Husain Shaikh",
+  "email": "faisalhs4851@gmail.com",
+  "coins": 0,
+  "__v": 0
+}]

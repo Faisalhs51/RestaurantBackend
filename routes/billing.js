@@ -247,7 +247,6 @@ const sendMail = async (receiver, items, total) => {
     service: "gmail",
     auth: {
       user: "faisalcom6119027@gmail.com",
-      // pass: "faisal786",
       pass: "mxvsowbefmhstnbk",
     },
   });
@@ -272,7 +271,7 @@ const sendMail = async (receiver, items, total) => {
 router.post("/billing/sendmail/", async (req, res) => {
   try {
     const email = req.body.email;
-    const coin = req.body.coin;
+    const coin = parseInt(req.body.coin);
     res.send("Message sented successfully.");
     let items = "";
     let am = await calculateOrderAmount(email);
@@ -288,8 +287,12 @@ router.post("/billing/sendmail/", async (req, res) => {
       c += (am / 100) * 0.08;
     } else if (coin === 0) {
       c += (am / 100) * 0.08;
+      // console.log(`${coin}    1`);
+      // console.log(`${c}    1`);
     } else {
       c = (am / 100) * 0.08;
+      // console.log(`${coin}    2`);
+      // console.log(`${c}    2`);
     }
     // console.log(c);
 
